@@ -1,9 +1,4 @@
----
-title: "Reproducible Research: Peer Assessment 1"
-output: 
-  html_document:
-    keep_md: true
----
+# Reproducible Research: Peer Assessment 1
 >
 
 ## Loading and preprocessing the data
@@ -13,46 +8,99 @@ output:
 
 > The following packages were loaded into R:
 
-```{r }
 
+```r
 library(dplyr)
+```
+
+```
+## 
+## Attaching package: 'dplyr'
+```
+
+```
+## The following objects are masked from 'package:stats':
+## 
+##     filter, lag
+```
+
+```
+## The following objects are masked from 'package:base':
+## 
+##     intersect, setdiff, setequal, union
+```
+
+```r
 library(ggplot2)
 library(RColorBrewer)
 library(stringr)
 library(lubridate)
+```
 
+```
+## 
+## Attaching package: 'lubridate'
+```
+
+```
+## The following object is masked from 'package:base':
+## 
+##     date
 ```
 
 > The dataset was downloaded from the website as a csv file into the R working directory, and saved with the filename, "**activity**".  Then the csv file was imported into R by the read.csv() function with stringsAsFactors=FALSE, into an object (a data frame), named "**activity**"
 
-```{r }
 
+```r
 activity <- read.csv("activity.csv", stringsAsFactors=FALSE)
-
 ```
 
 
 > The structure of the "**activity**" data frame was assessed by str().  T
 
-```{r }
-str(activity  )
 
+```r
+str(activity  )
+```
+
+```
+## 'data.frame':	17568 obs. of  3 variables:
+##  $ steps   : int  NA NA NA NA NA NA NA NA NA NA ...
+##  $ date    : chr  "2012-10-01" "2012-10-01" "2012-10-01" "2012-10-01" ...
+##  $ interval: int  0 5 10 15 20 25 30 35 40 45 ...
+```
+
+```r
 # checking head(activity)
 
 head(activity)
+```
 
+```
+##   steps       date interval
+## 1    NA 2012-10-01        0
+## 2    NA 2012-10-01        5
+## 3    NA 2012-10-01       10
+## 4    NA 2012-10-01       15
+## 5    NA 2012-10-01       20
+## 6    NA 2012-10-01       25
 ```
 
 
 > The NA's in the **activity** data frame was assessed in order to get an idea of what transformations will be done
 
-```{r }
+
+```r
 NAs <- activity %>% summarise(
 				NA.steps = sum(is.na(steps)) , 
 				NA.date= sum(is.na(date)), 
 				NA.interval= sum(is.na(interval)))
 NAs
+```
 
+```
+##   NA.steps NA.date NA.interval
+## 1     2304       0           0
 ```
 
 > The variable *steps* was the only variable with NA's, while *interval* and *date* were complete caes
@@ -65,8 +113,8 @@ NAs
 
 > The data for plotting the histogram (the total steps made in one day) was made using the dplyr package.  Then the histograme of total steps taken each day as constructed using ggplot2 package.
 
-```{r }
 
+```r
 # data preparation
 TotalStepsDay <- activity %>% group_by(date) %>% 
 			summarise(totalSteps = sum(steps, na.rm=TRUE)) %>%
@@ -80,8 +128,9 @@ histogram1 <- ggplot(data=TotalStepsDay, aes(x = totalSteps)) +
     labs(x="Total Steps Made in One Day", y="Relative Frequency")
 
 histogram1
+```
 
-``` 
+![](PA1_template_files/figure-html/unnamed-chunk-5-1.png)<!-- -->
 
 
 > NOTE:  In the above histogram, the ***relative*** frequency, instead of the count (or frequency) for easier comparison with the other histogram for the new dataset with NA's imputed (please see below.)
@@ -98,40 +147,53 @@ histogram1
 > The dplyr package was used to obtain the total numer of steps per day:
 
 
-```{r }
+
+```r
 MeanStepsDay <- activity %>% group_by(date) %>%
 			summarise(meanSteps = mean(steps, na.rm=TRUE)) %>%
 			filter(!is.na(meanSteps)) %>% ungroup(.)
-
-
 ```
 
 
-```{r }
+
+```r
 MedianStepsDay <- activity %>% group_by(date) %>%
 			summarise(medianSteps = median(steps, na.rm=TRUE)) %>%
 			filter(!is.na(medianSteps)) %>% ungroup(.) 
-
-
 ```
 
 
-```{r }
+
+```r
 TotalSteps <- activity %>% group_by(date) %>%
     summarise(total_steps = sum(steps, na.rm=TRUE)) %>%
     ungroup(.)
 
 head(data.frame(TotalSteps))
-
 ```
 
-```{r }
+```
+##         date total_steps
+## 1 2012-10-01           0
+## 2 2012-10-02         126
+## 3 2012-10-03       11352
+## 4 2012-10-04       12116
+## 5 2012-10-05       13294
+## 6 2012-10-06       15420
+```
 
+
+```r
 Overall_MeanMedianTOTAL <- TotalSteps %>% summarise(Overall_mean = mean(total_steps), Overall_median = median(total_steps))
 
 Overall_MeanMedianTOTAL
+```
 
-
+```
+## # A tibble: 1 x 2
+##   Overall_mean Overall_median
+##          <dbl>          <int>
+## 1      9354.23          10395
 ```
 
 
@@ -141,7 +203,8 @@ Overall_MeanMedianTOTAL
 >  First, a subset of the data frame, "**activity**" (missing values discarded) was made before plotting the time series graph.  Then using this data frame wih NA's removed, the line plot was made.
 
 
-```{r }
+
+```r
 complete_activity  <- activity %>% filter(!is.na(steps))
 
 line_plot1 <- ggplot(complete_activity , aes(x=interval, y=steps)) + 
@@ -149,8 +212,9 @@ line_plot1 <- ggplot(complete_activity , aes(x=interval, y=steps)) +
 		xlab ("Interval") + ylab("Number of steps") 
 
 line_plot1
-
 ```
+
+![](PA1_template_files/figure-html/unnamed-chunk-10-1.png)<!-- -->
 
 >
 
@@ -158,13 +222,16 @@ line_plot1
 
 > This was done by subsetting the complete_cases_activity data frame, for the interval that gave the maximum number of steps.
 
-```{r }
 
+```r
 interval_max_steps  <- 
 		complete_activity[max(complete_activity$steps),]$interval
 
 interval_max_steps
+```
 
+```
+## [1] 1905
 ```
 
 
@@ -177,32 +244,34 @@ interval_max_steps
  
 >  This code for obtaining the NAs in the activity data frame (called **NAs** was already done previously, this will just be called again here.
 
-```{r }
 
+```r
 NAs
+```
 
-
+```
+##   NA.steps NA.date NA.interval
+## 1     2304       0           0
 ```
 
 #### ***Devise a strategy for filling in all of the missing values in the dataset. The strategy does not need to be sophisticated. For example, you could use the mean/median for that day, or the mean for that 5-minute interval, etc***
 
 > The median of the steps per day was used as the "fill variable" for the NA's.  The dplyr package was used to impute the NA's in the *steps* variable in the **activity** data frame.  The resulting data frame with imputed NA's was called "***df_new ***"
 
-```{r }
+
+```r
 df_new <- activity %>%  group_by(date) 
 df_new <- df_new  %>%
 	mutate(
 		steps = ifelse(is.na(steps), median(df_new$steps, na.rm=TRUE), steps)
 	) 
-
-
 ```
 
 > In order to verify that all NA's were imputed, the NA's were counted for ***df_new***
 
 
-```{r }
 
+```r
 NAs_2 <-ungroup(df_new) %>% summarise(
 				NA.steps = sum(is.na(steps)) , 
 				NA.date= sum(is.na(date)), 
@@ -210,7 +279,13 @@ NAs_2 <-ungroup(df_new) %>% summarise(
 				
 
 NAs_2
+```
 
+```
+## # A tibble: 1 x 3
+##   NA.steps NA.date NA.interval
+##      <int>   <int>       <int>
+## 1        0       0           0
 ```
 
 > All NA's were confirmed imputted with the target fill value, the median of steps for each day.  This was confirmed by the zero NA's for the steps variable.
@@ -220,12 +295,30 @@ NAs_2
 > The new data frame (with imputted NA's) was obtained from the above code.  The resulting data frame was called ***df_new***
 
 
-```{r }
 
+```r
 str(data.frame(df_new))
+```
+
+```
+## 'data.frame':	17568 obs. of  3 variables:
+##  $ steps   : num  0 0 0 0 0 0 0 0 0 0 ...
+##  $ date    : chr  "2012-10-01" "2012-10-01" "2012-10-01" "2012-10-01" ...
+##  $ interval: int  0 5 10 15 20 25 30 35 40 45 ...
+```
+
+```r
 head(data.frame(df_new))
+```
 
-
+```
+##   steps       date interval
+## 1     0 2012-10-01        0
+## 2     0 2012-10-01        5
+## 3     0 2012-10-01       10
+## 4     0 2012-10-01       15
+## 5     0 2012-10-01       20
+## 6     0 2012-10-01       25
 ```
 
 
@@ -238,8 +331,8 @@ head(data.frame(df_new))
 
 > Then the corresponding histogram was plotted, as shown.
 
-```{r }
 
+```r
 df_newTOTAL <- df_new %>% summarise(total = sum(steps)) 
 
 histogram2 <- ggplot(data=df_newTOTAL, aes(x = total)) + 
@@ -248,46 +341,61 @@ histogram2 <- ggplot(data=df_newTOTAL, aes(x = total)) +
     labs(x="Total Steps Made in One Day", y="Relative Frequency")
 
 histogram2
-
-
 ```
+
+![](PA1_template_files/figure-html/unnamed-chunk-16-1.png)<!-- -->
 
 The means and medians for each day and overall mean/median are computed below:
 
-```{r }
+
+```r
 MeanStepsDay2 <- df_new %>% group_by(date) %>%
 			summarise(meanSteps = mean(steps, na.rm=TRUE)) %>%
 			ungroup(.)
-
 ```
 
 
 
-```{r }
+
+```r
 MedianStepsDay2 <- df_new %>% group_by(date) %>%
 			summarise(medianSteps = median(steps, na.rm=TRUE)) %>%
 			ungroup(.)
-
-
 ```
 
 
-```{r }
 
+```r
 TotalSteps2 <- df_new %>% group_by(date) %>%
     summarise(total_steps = sum(steps, na.rm=TRUE)) %>%
     ungroup(.)
 
 head(data.frame(TotalSteps2))
+```
 
+```
+##         date total_steps
+## 1 2012-10-01           0
+## 2 2012-10-02         126
+## 3 2012-10-03       11352
+## 4 2012-10-04       12116
+## 5 2012-10-05       13294
+## 6 2012-10-06       15420
 ```
 
 
-```{r }
 
+```r
 Overall_MeanMedianTOTAL2 <- TotalSteps2 %>% summarise(Overall_mean = mean(total_steps), Overall_median = median(total_steps))
 
 Overall_MeanMedianTOTAL2
+```
+
+```
+## # A tibble: 1 x 2
+##   Overall_mean Overall_median
+##          <dbl>          <dbl>
+## 1      9354.23          10395
 ```
 
 
@@ -311,8 +419,8 @@ Overall_MeanMedianTOTAL2
 > Then using the ifelse() command in dplyr, a new column variable called, *factorwk* was creaed as a factor variable which had two levels: "weekend" if the *day_of_wk* value was either "Saturday" or "Sunday", and weekday, for the other days.
 
 
-```{r }
 
+```r
 df_new <- df_new %>% mutate(day_of_wk = weekdays(ymd(date)))
 
 df_new <- df_new %>% 
@@ -322,10 +430,6 @@ df_new <- df_new %>%
 
 df_new$factorwk <- factor(df_new$factorwk, 
 			levels=c("weekend","weekday"))
-
-
-
-
 ```
 
 
@@ -333,18 +437,17 @@ df_new$factorwk <- factor(df_new$factorwk,
 
 > ggplot2 was used to construct the time course plot of interval versus steps, as shown below:
 
-```{r }
 
+```r
 line_plot2 <- ggplot(df_new, aes(x=interval, y=steps)) + 
 		geom_line(col="steelblue2", alpha=0.7) + facet_wrap(~factorwk, nrow=2) +
 		xlab ("Interval") + ylab("Number of steps") + 
 		theme(strip.background=element_rect(fill="bisque1"))
 
 line_plot2
-
-
-
 ```
+
+![](PA1_template_files/figure-html/unnamed-chunk-22-1.png)<!-- -->
 
 
 
