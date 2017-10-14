@@ -273,12 +273,13 @@ line_plot_1</code></pre>
 interval_max_steps  &lt;-
         unique(meanStep_byInterval_1[max.index, ]$interval)
 
-# interval_max_steps
 
-maximum_values &lt;- data.frame(max.mean_seps=max(meanStep_byInterval_1$mean_steps), max_interval=interval_max_steps)
+# Data frame of maximum mean steps and the corresponding interval at maximum mean steps
+
+maximum_values &lt;- data.frame(max.mean_steps=max(meanStep_byInterval_1$mean_steps), interval_at_max_steps=interval_max_steps)
 maximum_values</code></pre>
-<pre><code>##   max.mean_seps max_interval
-## 1      206.1698          835</code></pre>
+<pre><code>##   max.mean_steps interval_at_max_steps
+## 1       206.1698                   835</code></pre>
 </div>
 </div>
 <div id="imputing-missing-values" class="section level2">
@@ -387,13 +388,13 @@ Overall_MeanMedianTOTAL2</code></pre>
 <div id="do-these-values-differ-from-the-estimates-from-the-first-part-of-the-assignment" class="section level5">
 <h5><strong>Do these values differ from the estimates from the first part of the assignment?</strong></h5>
 <blockquote>
-<p>Answer : <strong>No</strong>, the values do not different</p>
+<p>Answer : <strong>No</strong>, the values do not seem to be different from each other</p>
 </blockquote>
 </div>
 <div id="what-is-the-impact-of-imputing-missing-data-on-the-estimates-of-the-total-daily-number-of-steps" class="section level5">
 <h5><strong>What is the impact of imputing missing data on the estimates of the total daily number of steps ?</strong></h5>
 <blockquote>
-<p>Answer: There seems to <strong>no impact</strong> of mputing missing data on the estimates of the total daily number of steps</p>
+<p>Answer: There seems to be <strong>no impact</strong> in imputing missing data on the estimates of the total daily number of steps</p>
 </blockquote>
 </div>
 </div>

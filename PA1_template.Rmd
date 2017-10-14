@@ -158,9 +158,10 @@ max.index <- meanStep_byInterval_1$mean_steps==max(meanStep_byInterval_1$mean_st
 interval_max_steps  <-
 		unique(meanStep_byInterval_1[max.index, ]$interval)
 
-# interval_max_steps
 
-maximum_values <- data.frame(max.mean_seps=max(meanStep_byInterval_1$mean_steps), max_interval=interval_max_steps)
+# Data frame of maximum mean steps and the corresponding interval at maximum mean steps
+
+maximum_values <- data.frame(max.mean_steps=max(meanStep_byInterval_1$mean_steps), interval_at_max_steps=interval_max_steps)
 maximum_values
 
 ```
@@ -301,12 +302,12 @@ Overall_MeanMedianTOTAL2
 
 ##### **Do these values differ from the estimates from the first part of the assignment?**
 
-> Answer : **No**, the values do not different
+> Answer : **No**, the values do not seem to be different from each other
 
 
 ##### **What is the impact of imputing missing data on the estimates of the total daily number of steps  ?**
 
-> Answer:  There seems to **no impact** of mputing missing data on the estimates of the total daily number of steps
+> Answer:  There seems to be **no impact** in imputing missing data on the estimates of the total daily number of steps
 
 
 
