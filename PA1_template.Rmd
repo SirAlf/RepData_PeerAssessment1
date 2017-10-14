@@ -65,22 +65,21 @@ NAs
 ```{r }
 
 # data preparation
-TotalStepsDay <- activity %>% group_by(date) %>% 
-			summarise(totalSteps = sum(steps, na.rm=TRUE)) %>%
-			ungroup(.)
+TotalStepsDay  <-activity %>% group_by(date) %>% summarise(total = sum(steps, na.rm=TRUE)) %>% ungroup(.) 
 
 # histogram plotting
-
-histogram_1 <- ggplot(data=TotalStepsDay, aes(x = totalSteps)) + 
-		geom_histogram(aes(y=..density..), binwidth=2000, 
-		               col= "dark gray" , fill=brewer.pal(4, "Set2")[2], alpha=0.25)  +
-  labs(x="Total Steps Made in One Day", y="Relative Frequency")
+histogram_1 <- ggplot(data=TotalStepsDay, aes(x = total)) + 
+		geom_histogram(aes(y=..density..), binwidth = 2000, 
+		               col= "dark gray" , fill=brewer.pal(4, "Set2")[2], alpha=0.5)  +
+    labs(x="Total Steps Made in One Day", y="Relative Frequency")
 histogram_1
 
 ``` 
 
 
-> NOTE:  In the above histogram, the ***relative*** frequency, instead of the count (or frequency) for easier comparison with the other histogram for the new dataset with NA's imputed (please see below.)
+> NOTE 1:  In the above histogram, the ***relative*** frequency, instead of the count (or absolute frequency) for easier comparison with the other histogram (histogram 2 below). 
+
+> NOTE 2:  The ***binwidth*** was selected to 2000, in order to produce a smooth histogram with no gaps.
 
 
 
@@ -136,7 +135,8 @@ Overall_MeanMedianTOTAL
 
 # The "active" dataa frame was manipulated to obtain the mean steps for each "group-by" interval.  Then the plot was made.
 
-meanStep_byInterval_1 <- activity %>% filter(!is.na(steps)) %>% group_by(interval)%>% mutate(mean_steps=mean(steps, na.rm=TRUE)) 
+meanStep_byInterval_1 <- activity %>% filter(!is.na(steps)) %>% group_by(interval) %>% 
+                        mutate(mean_steps=mean(steps, na.rm=TRUE)) %>% ungroup(.)
 			
 line_plot_1 <- ggplot(meanStep_byInterval_1 , aes(x=interval, y=mean_steps)) + geom_line(col=brewer.pal(4, "Set2")[2],alpha=0.75)+ 	            xlab ("Interval") + ylab("Number of steps") 
 line_plot_1
@@ -152,10 +152,16 @@ line_plot_1
 
 ```{r }
 
-interval_max_steps  <- 
-		meanStep_byInterval_1[max(meanStep_byInterval_1$mean_steps),]$interval
 
-interval_max_steps
+max.index <- meanStep_byInterval_1$mean_steps==max(meanStep_byInterval_1$mean_steps)
+
+interval_max_steps  <-
+		unique(meanStep_byInterval_1[max.index, ]$interval)
+
+# interval_max_steps
+
+maximum_values <- data.frame(max.mean_seps=max(meanStep_byInterval_1$mean_steps), max_interval=interval_max_steps)
+maximum_values
 
 ```
 
@@ -178,14 +184,15 @@ NAs
 
 #### ***Devise a strategy for filling in all of the missing values in the dataset. The strategy does not need to be sophisticated. For example, you could use the mean/median for that day, or the mean for that 5-minute interval, etc***
 
-> The median of the steps per day was used as the "fill variable" for the NA's.  The dplyr package was used to impute the NA's in the *steps* variable in the **activity** data frame.  The resulting data frame with imputed NA's was called "***df_new ***"
+> The **mean** of the steps per day was used as the "fill variable" for the NA's.  The dplyr package was used to impute the NA's in the *steps* variable in the **activity** data frame.  The resulting data frame with imputed NA's was called "***df_new ***"
 
 ```{r }
 df_new <- activity %>%  group_by(date) 
 df_new <- df_new  %>%
 	mutate(
-		steps = ifelse(is.na(steps), median(df_new$steps, na.rm=TRUE), steps)
+		steps = ifelse(is.na(steps), mean(df_new$steps, na.rm=TRUE), steps)
 	) 
+
 
 
 ```
@@ -201,17 +208,16 @@ NAs_2 <-ungroup(df_new) %>% summarise(
 				NA.interval= sum(is.na(interval)))
 NAs_2
 
+
 ```
 
 > All NA's were confirmed imputted with the target fill value, the median of steps for each day.  This was confirmed by the zero NA's for the steps variable.
 
-> ***NOTE:***  The median for the steps variable for each day have all the values as zeros.  This is why the values of the imputed variable NA's were zero.  This DOES NOT mean that the imputation of the NA's failed.  The actual values of th medians were zeros.
 
 #### ***Create a new dataset that is equal to the original dataset but with the missing data filled in***
 
-> The new data frame (with imputted NA's) was obtained from the above code.  The resulting data frame was called ***df_new***
+> The new data frame (with imputted NA's) was obtained from the code *above*.  The resulting data frame was called ***df_new***
 
-> ***NOTE:***  The values for the medians of the steps per day were ALL zeros.  Therefore, the presence of zeros does not mean that the imputation failed, but rather, they were the actual values of the medians for each day.
 
 
 ```{r }
@@ -233,18 +239,26 @@ head(data.frame(df_new), 3)
 
 ```{r }
 
-# Draw histogram 1
+# Draw histogram 2
 
 df_newTOTAL <- df_new %>% summarise(total = sum(steps)) 
 
 histogram_2 <- ggplot(data=df_newTOTAL, aes(x = total)) + 
-		geom_histogram(aes(y=..density..), binwidth=2000, 
+		geom_histogram(aes(y=..density..), binwidth = 2000, 
 		               col= "dark gray" , fill=brewer.pal(4, "Set2")[1], alpha=0.5)  +
     labs(x="Total Steps Made in One Day", y="Relative Frequency")
 histogram_2
 
 
 ```
+
+> NOTE 1:  In the above histogram, the ***relative*** frequency, instead of the count (or absolute frequency) for easier comparison with the other histogram (histogram 1 above).
+
+> NOTE 2:  The ***binwidth*** was selected to 2000, in order to produce a smooth histogram with no gaps.
+
+
+
+
 
 The means and medians for each day and overall mean/median (as well as the total steps) are computed below:
 
@@ -304,21 +318,17 @@ Overall_MeanMedianTOTAL2
 
 > Then using the ifelse() command in dplyr, a new column variable called, *factorwk* was creaed as a factor variable which had two levels: "weekend" if the *day_of_wk* value was either "Saturday" or "Sunday", and weekday, for the other days.
 
+> The functions, ***weekdays()*** and ***ymd()*** of the **LUBRIDATE** package was used to convert the date to weekdays.
+
 
 ```{r }
 
-df_new <- df_new %>% mutate(day_of_wk = weekdays(ymd(date)))
+df_new <- df_new %>% mutate(day_of_wk = weekdays(ymd(date))) %>% 
+          mutate(factorwk = ifelse((day_of_wk == "Saturday" | day_of_wk == "Sunday"), "weekend", "weekday" )) # %>% ungroup(.)
 
-df_new <- df_new %>% 
-	mutate(factorwk = 
-		ifelse(day_of_wk == "Sunday" | day_of_wk == "Sunday", "weekend", 
-				"weekday" )) %>% ungroup(.)
+df_new$factorwk <- factor(df_new$factorwk, levels=c("weekend","weekday")) 
 
-df_new$factorwk <- factor(df_new$factorwk, 
-			levels=c("weekend","weekday"))
-
-
-
+str(data.frame(df_new))
 
 ```
 
@@ -332,20 +342,16 @@ df_new$factorwk <- factor(df_new$factorwk,
 
 # The "df_new" dataa frame was manipulated to obtain the mean steps for each "group-by" interval.  Then the plot was made.
 
-meanStep_byInterval_2 <- df_new %>% group_by(interval)%>%
+meanStep_byInterval_2 <- df_new %>% group_by(interval, factorwk)%>%
 			mutate(mean_steps=mean(steps, na.rm=TRUE)) 
 			
-
 line_plot2 <- ggplot(meanStep_byInterval_2 , aes(x=interval, y=mean_steps)) + 
-		geom_line(col="steelblue2", alpha=0.7) + facet_wrap(~factorwk, nrow=2) +
-		xlab ("Interval") + ylab("Number of steps") + 
-		theme(strip.background=element_rect(fill="bisque1"))
+		          geom_line(col="steelblue2", alpha=0.7) + facet_wrap(~factorwk, nrow=2) +
+		          xlab ("Interval") + ylab("Number of steps") + 
+		          theme(strip.background=element_rect(fill="bisque1"))
 line_plot2
-
-
 
 ```
 
-> The graph shows that the relationship between Interval and Number of steps were almost the same, whether on a weekday or on a weekend.
-
+> The graph shows that over the interval larger than 1000, the number of steps was generally larger on weekends, compared to weekdays.
 
