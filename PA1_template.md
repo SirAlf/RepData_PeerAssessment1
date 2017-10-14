@@ -113,9 +113,9 @@ histogram_1
 ![](PA1_template_files/figure-html/unnamed-chunk-5-1.png)<!-- -->
 
 
-> NOTE 1:  In the above histogram, the ***relative*** frequency, instead of the count (or absolute frequency) for easier comparison with the other histogram (histogram 2 below). 
+> **NOTE 1**:  In the above histogram, the ***relative frequency***, instead of the count (or *absolute frequency*) for easier comparison with the other histogram (histogram 2 below). 
 
-> NOTE 2:  The ***binwidth*** was selected to 2000, in order to produce a smooth histogram with no gaps.
+> **NOTE 2**:  The ***binwidth*** was selected to 2000, in order to produce a smooth histogram with no gaps.
 
 
 
@@ -347,9 +347,9 @@ histogram_2
 
 ![](PA1_template_files/figure-html/unnamed-chunk-16-1.png)<!-- -->
 
-> NOTE 1:  In the above histogram, the ***relative*** frequency, instead of the count (or absolute frequency) for easier comparison with the other histogram (histogram 1 above).
+> **NOTE 1**:  In the above histogram, the ***relative frequency***, instead of the count (or *absolute frequency*)* for easier comparison with the other histogram (histogram 1 above).
 
-> NOTE 2:  The ***binwidth*** was selected to 2000, in order to produce a smooth histogram with no gaps.
+> **NOTE 2**:  The ***binwidth*** was selected to 2000, in order to produce a smooth histogram with no gaps.
 
 
 
